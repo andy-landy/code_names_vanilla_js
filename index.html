@@ -1,0 +1,283 @@
+<html>
+<head>
+    <style>
+        @keyframes tremble {
+            0% {font-size: 1em;}
+            50% {font-size: 0.75em; background-color: #ffffff}
+            100% {font-size: 1em;}
+        }
+
+        .card-table {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            width: 16%;
+            font-size: 1em;
+            margin: 0.5%;
+            padding: 1em;
+            border-radius: 0.5em;
+            text-transform: uppercase;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .card.type-unk {
+            background-color: #e0e0e0;
+        }
+        .card.type-unk:hover {
+            background-color: #c0c0c0;
+        }
+        .card.type-unk:active {
+            background-color: #a0a0a0;
+        }
+
+        .card.type-wait {
+            background-color: #a0a0a0;
+            animation-name: tremble;
+            animation-duration: 0.16667s;
+            animation-iteration-count: infinite;
+        }
+
+        .card.type-red {
+            background-color: #ffaaaa;
+        }
+
+        .card.type-blue {
+            background-color: #aaaaff;
+        }
+
+        .card.type-white {
+            background-color: #fffff0;
+        }
+
+        .card.type-black {
+            background-color: #303030;
+            color: #000000;
+        }
+
+        .game-board {
+        }
+
+        .score-panel {
+            display: flex;
+        }
+
+        .score-cell {
+            font-size: 8em;
+            flex-basis: 50%;
+            flex-grow: 0;
+            margin: 0.125em;
+            text-align: center;
+            vertical-align: middle;
+            border-radius: 0.125em;
+        }
+
+        .score-cell.score-cell-red {
+            background-color: #ffaaaa;
+            color: #aa0000;
+        }
+
+        .score-cell.score-cell-blue {
+            background-color: #aaaaff;
+            color: #0000aa;
+        }
+
+        .help-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .help-screen > span {
+            margin: 1em;
+            font-size: 2em;
+        }
+
+        .game-screen {
+             height: 100%;
+             background-image: url(" data:image/gif;base64,R0lGODdhLQAtALMAAAAAAMzMzNTU1Nzc3OPj4+vr6/X19f///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAAAgALAAAAAAtAC0AAATZ8MgpS7iF6s27lwL2jWRnBVmplkaYrrA3oHHNWa+tH0I+GYXeblTwGQahwGA4MkyCl+iSSUQKrtipzorNOqmy6EVASH3Bm9nYVzijn4KBr6J9/zwWt/1jIexLFgJ/JCdzgxQngocmUXqLFWN+jxpAjioFZZMcagGWi2qKmhNqho8zoaISM5Kpqp2DnqqodquWcodJAWQarHstYhcEX7GxKgTHyMjDBszNzK+mwGPFQ20SQJy6iwJ6R8GHFh0GvXszrT8h1H8n6ntJ7W8n0Kmc8GgEVjXjV6VUEQA7")
+        }
+    </style>
+</head>
+<body>
+    <div class='game-screen'>
+        <div class='game-header'>
+        </div>
+        <div class='game-holder' id='game-holder'>
+        </div>
+    </div>
+    <script type="text/javascript">
+        const allWords = ['family', 'government', 'health', 'system', 'computer', 'meat',
+            'year', 'thanks', 'music', 'person', 'reading', 'method', 'data', 'food',
+            'understanding', 'theory', 'law', 'bird', 'literature', 'problem', 'software',
+            'control', 'knowledge', 'power', 'ability', 'economics', 'love', 'internet',
+            'television', 'science', 'library', 'nature', 'fact', 'product', 'idea',
+            'temperature', 'investment', 'area', 'society', 'activity', 'story', 'industry',
+            'media', 'thing', 'oven', 'community', 'definition', 'safety', 'quality',
+            'development', 'language', 'management', 'player', 'variety', 'video', 'week',
+            'security', 'country', 'exam', 'movie', 'organization', 'equipment',
+            'physics', 'analysis', 'policy', 'series', 'thought', 'basis', 'boyfriend',
+            'direction', 'strategy', 'technology', 'army', 'camera', 'freedom', 'paper',
+            'environment', 'child', 'instance', 'month', 'truth', 'marketing',
+            'university', 'writing', 'article', 'department', 'difference', 'goal',
+            'news', 'audience', 'fishing', 'growth', 'income', 'marriage', 'user',
+            'combination', 'failure', 'meaning', 'medicine', 'philosophy',
+            'teacher', 'communication', 'night', 'chemistry', 'disease',
+            'disk', 'energy', 'nation', 'road', 'role', 'soup', 'advertising',
+            'location', 'success', 'addition', 'apartment', 'education', 'math',
+            'moment', 'painting', 'politics', 'attention', 'decision', 'event',
+            'property', 'shopping', 'student', 'wood', 'competition',
+            'distribution', 'entertainment', 'office', 'population', 'president',
+            'unit', 'category', 'cigarette', 'context', 'introduction', 'opportunity',
+            'performance', 'driver', 'flight', 'length', 'magazine', 'newspaper',
+            'relationship', 'teaching', 'cell', 'dealer', 'finding', 'lake', 'member',
+            'message', 'phone', 'scene', 'appearance', 'association', 'concept',
+            'customer', 'death', 'discussion', 'housing', 'inflation', 'insurance',
+            'mood', 'woman', 'advice', 'blood', 'effort', 'expression', 'importance',
+            'opinion', 'payment', 'reality', 'responsibility', 'situation', 'skill',
+            'statement', 'wealth', 'application', 'city', 'county', 'depth', 'estate',
+            'foundation', 'grandmother', 'heart', 'perspective', 'photo', 'recipe',
+            'studio', 'topic', 'collection', 'depression', 'imagination', 'passion',
+            'percentage', 'resource', 'setting', 'ad', 'agency', 'college', 'connection',
+            'criticism', 'debt', 'description', 'memory', 'patience', 'secretary', 'solution',
+            'administration', 'aspect', 'attitude', 'director', 'personality', 'psychology',
+            'recommendation', 'response', 'selection', 'storage', 'version', 'alcohol',
+            'argument', 'complaint', 'contract', 'emphasis', 'highway', 'loss', 'membership',
+            'possession', 'preparation', 'steak', 'union', 'agreement', 'cancer', 'currency',
+            'employment', 'engineering', 'entry', 'interaction', 'mixture', 'preference'];
+
+
+        const getHash = word => word.split('').reduce((a, b) => (a << 5) - a + b.charCodeAt(0), 0);
+
+        const shuffle = (words, seed) => {
+            const reorderedWords = words.slice();
+            const getSaltHash = word => getHash('' + word + seed + 'ssssaaaalllltttt');
+            reorderedWords.sort((a, b) => getSaltHash(a) - getSaltHash(b));
+            return reorderedWords;
+        };
+
+        const changeClass = (node, oldClass, newClass) => {
+            node.classList.remove(oldClass);
+            node.classList.add(newClass);
+        };
+
+        const create = ({tag, classes, html, children, onclick, extra}) => {
+            const result = document.createElement(tag);
+            (classes || []).forEach(cls => {result.classList.add(cls);});
+            if (html !== undefined) {
+                result.innerHTML = html;
+            }
+            (children || []).forEach(child => {result.appendChild(child)});
+            if (onclick !== undefined) {
+                result.onclick = onclick;
+            }
+            Object.assign(result, extra || {});
+            return result;
+        };
+
+        const getWordToType = (seed, redCount, blueCount, whiteCount, blackCount) => {
+            const wordToType = {} 
+            shuffle(allWords, seed).slice(0, redCount + blueCount + whiteCount + blackCount)
+                .forEach((word, i) => {wordToType[word] = (i < redCount ? 'red' :
+                    i < redCount + blueCount ? 'blue' :
+                        i < redCount + blueCount + whiteCount ? 'white' : 'black')});
+            return wordToType;
+        };
+
+        const onCardClick = (card, check, word) => {
+            card.onclick = () => {};
+            changeClass(card, 'type-unk', 'type-wait');
+            setTimeout(() => changeClass(card, 'type-wait', 'type-' + check(word)), 2000);
+        };
+
+        const Card = (word, check) => {
+            const card = create({
+                tag: 'div', 
+                classes: ['card', 'type-unk'], 
+                html: word, 
+                onclick: () => onCardClick(card, check, word)
+            });
+            return card;
+        };
+
+        const CardTable = (words, check) => create({
+            tag: 'div',
+            classes: ['card-table'],
+            children: words.map(word => Card(word, check))
+        });
+
+        const ScoreCell = (type, score) => {
+            const cell = create({
+                tag: 'div',
+                classes: ['score-cell', 'score-cell-' + type],
+                extra: {setHTML: html => {cell.innerHTML = html}},
+                html: score
+            });
+            return cell;
+        };  
+
+        const GameBoard = seed => {
+            const typeToCount = {'red': 9, 'blue': 8};
+            const wordToType = getWordToType(seed, typeToCount.red, typeToCount.blue, 7, 1);
+
+            const typeToScoreCell = {
+                red: ScoreCell('red', typeToCount.red),
+                blue: ScoreCell('blue', typeToCount.blue),
+            };
+
+            const check = word => {
+                const type = wordToType[word];
+                if (type === 'red' || type === 'blue') {
+                    typeToScoreCell[type].setHTML(--typeToCount[type]);
+                }
+                return type;
+            };
+
+            return create({
+                tag: 'div',
+                classes: ['game-board'],
+                children: [
+                    CardTable(shuffle(Object.keys(wordToType), seed + '!'), check),
+                    create({
+                        tag: 'div', 
+                        classes: ['score-panel'], 
+                        children: [typeToScoreCell.red, typeToScoreCell.blue]
+                    })
+                ],
+            });
+        };
+
+        const HelpScreen = () => {
+            const url = location.toString().replace(location.search, '') + '?seed=example123';
+            return create({
+                tag: 'div',
+                classes: ['help-screen'],
+                children: [
+                    create({tag: 'span', extra: {textContent: 'to play with seed example123'}}),
+                    create({tag: 'span', extra: {textContent: 'as a team: ' + url}}),
+                    create({tag: 'span', extra: {textContent: 'as a captain: ' + url + '&as_captain'}}),
+                ]
+            });
+        };
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const seed = urlParams.get('seed');
+        const asCaptain = urlParams.has('as_captain');
+
+        if (seed) {
+            document.getElementById('game-holder').appendChild(GameBoard(seed));
+            if (asCaptain) {
+                Array.prototype.forEach.call(
+                    document.getElementsByClassName('card'),
+                    card => card.click()
+                );
+            };
+        } else {
+            document.getElementById('game-holder').appendChild(HelpScreen());
+        }
+
+    </script>
+</body>
+</html>

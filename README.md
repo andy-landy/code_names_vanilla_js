@@ -1,1 +1,2 @@
-# code_names_vanilla_js
+# Code-Names with vanilla JS
+
